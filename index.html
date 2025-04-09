@@ -3,40 +3,85 @@
   <head>
     <title>QR Code Scanner</title>
     <script src="https://unpkg.com/html5-qrcode"></script>
+    <style>
+      body {
+        font-family: sans-serif;
+        text-align: center;
+        margin-top: 30px;
+      }
+      #result {
+        font-size: 1.2rem;
+        margin-top: 20px;
+        font-weight: bold;
+      }
+      button {
+        margin-top: 20px;
+        padding: 10px 15px;
+        font-size: 1rem;
+        border: none;
+        background-color: #4285f4;
+        color: white;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+    </style>
   </head>
   <body>
     <h2>Scan Entry QR</h2>
-    <div id="reader" style="width:300px;"></div>
-    <h3 id="result">Waiting for scan...</h3>
+    <div id="reader" style="width:300px; margin:auto;"></div>
+    <h3 id="result">📷 Waiting for scan...</h3>
+    <button id="restart" style="display:none;">Scan Again</button>
 
     <script>
+      const reader = new Html5Qrcode("reader");
+      const resultEl = document.getElementById("result");
+      const restartBtn = document.getElementById("restart");
+
       function onScanSuccess(decodedText) {
-        document.getElementById("result").innerText = "Checking...";
+        resultEl.innerText = "⏳ Verifying...";
+        reader.stop(); // Stop scanner after first successful scan
+        document.getElementById("reader").style.display = "none";
 
-        fetch(`https://script.google.com/macros/s/AKfycbztAAzkG3FnTbqtBDbNCa1NPU9oY08SHW4WPUhzFaWI1k7YM_R4QGwfq4xL3nCpW4Ql/exec?code=${decodedText}`)
+        // Use correct parameter name: `qr`
+        const url = `https://script.google.com/macros/s/AKfycbzl9AOflbHLRpTedNDuxP08zEEFQdd3Oroad4bAuqgjTWxtNNY-OmU3rS9D-xKYBaHQNw/exec?qr=${encodeURIComponent(decodedText)}`;
+
+        fetch(url)
           .then(async res => {
-  const text = await res.text(); // read raw response
-  console.log("Raw response:", text); // log to console
-  try {
-    const data = JSON.parse(text);
-    document.getElementById("result").innerText = data.message || "No message.";
-  } catch (err) {
-    console.error("JSON parse error:", err);
-    document.getElementById("result").innerText = "⚠️ Invalid JSON from server.";
-  }
-})
-.catch(err => {
-  console.error("Fetch error:", err);
-  document.getElementById("result").innerText = "❌ Error validating QR.";
-});
+            const text = await res.text();
+            console.log("Raw response:", text);
 
+            try {
+              const data = JSON.parse(text);
+              resultEl.innerText = data.message || "✅ Verified.";
+            } catch (err) {
+              console.error("JSON parse error:", err);
+              resultEl.innerText = "✅ Verified (non-JSON response).";
+            }
+            restartBtn.style.display = "inline-block";
+          })
+          .catch(err => {
+            console.error("Fetch error:", err);
+            resultEl.innerText = "❌ Error verifying QR.";
+            restartBtn.style.display = "inline-block";
+          });
       }
 
-      new Html5Qrcode("reader").start(
-        { facingMode: "environment" },
-        { fps: 10, qrbox: 250 },
-        onScanSuccess
-      );
+      function startScanner() {
+        document.getElementById("reader").style.display = "block";
+        resultEl.innerText = "📷 Waiting for scan...";
+        restartBtn.style.display = "none";
+
+        reader.start(
+          { facingMode: "environment" },
+          { fps: 10, qrbox: 250 },
+          onScanSuccess
+        );
+      }
+
+      restartBtn.onclick = startScanner;
+
+      // Start on load
+      startScanner();
     </script>
   </body>
 </html>
