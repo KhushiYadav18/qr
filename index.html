@@ -13,7 +13,7 @@
       function onScanSuccess(decodedText) {
         document.getElementById("result").innerText = "Checking...";
 
-        fetch(`https://script.google.com/macros/s/AKfycbzjHKlFraKQep-qUctxv_l4y8TDZR7ATN0Va8V0t8IAMVm3ck5LdZ97tkHu6Tv8iyvWoA/exec?code=${decodedText}`)
+        fetch(`https://script.google.com/macros/s/AKfycbyBojd_TlfFPKhJHF_sfYdSj74GFIZUEwk7Zwb9GTbt1Oi04dh1r2wKwK2Jd8JI___q/exec?code=${decodedText}`)
           .then(async res => {
   const text = await res.text(); // read raw response
   console.log("Raw response:", text); // log to console
