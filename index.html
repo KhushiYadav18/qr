@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>QR Code Scanner</title>
+    <script src="https://unpkg.com/html5-qrcode"></script>
+  </head>
+  <body>
+    <h2>Scan Entry QR</h2>
+    <div id="reader" style="width:300px;"></div>
+    <h3 id="result">Waiting for scan...</h3>
+
+    <script>
+      function onScanSuccess(decodedText) {
+        document.getElementById("result").innerText = "Checking...";
+
+        fetch(`https://script.google.com/macros/s/https://script.google.com/macros/s/AKfycbznpF59JaIE4HKp3mhZVgEhQZXtKOAmMLiL86AnH625TcwJgKPdzSPx2_LTL93_Fxs/exec/exec?code=${decodedText}`)
+          .then(res => res.json())
+          .then(data => {
+            document.getElementById("result").innerText = data.message;
+          })
+          .catch(() => {
+            document.getElementById("result").innerText = "Error validating QR.";
+          });
+      }
+
+      new Html5Qrcode("reader").start(
+        { facingMode: "environment" },
+        { fps: 10, qrbox: 250 },
+        onScanSuccess
+      );
+    </script>
+  </body>
+</html>
