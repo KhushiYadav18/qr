@@ -14,13 +14,22 @@
         document.getElementById("result").innerText = "Checking...";
 
         fetch(`https://script.google.com/macros/s/AKfycbzjHKlFraKQep-qUctxv_l4y8TDZR7ATN0Va8V0t8IAMVm3ck5LdZ97tkHu6Tv8iyvWoA/exec?code=${decodedText}`)
-          .then(res => res.json())
-          .then(data => {
-            document.getElementById("result").innerText = data.message;
-          })
-          .catch(() => {
-            document.getElementById("result").innerText = "❌ Error validating QR.";
-          });
+          .then(async res => {
+  const text = await res.text(); // read raw response
+  console.log("Raw response:", text); // log to console
+  try {
+    const data = JSON.parse(text);
+    document.getElementById("result").innerText = data.message || "No message.";
+  } catch (err) {
+    console.error("JSON parse error:", err);
+    document.getElementById("result").innerText = "⚠️ Invalid JSON from server.";
+  }
+})
+.catch(err => {
+  console.error("Fetch error:", err);
+  document.getElementById("result").innerText = "❌ Error validating QR.";
+});
+
       }
 
       new Html5Qrcode("reader").start(
