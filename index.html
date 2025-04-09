@@ -13,7 +13,7 @@
       function onScanSuccess(decodedText) {
         document.getElementById("result").innerText = "Checking...";
 
-        fetch(`https://script.google.com/macros/s/AKfycbzcydxa-Rt7e5QbVh8oAxOutdZaYLjr3Yw7I6ouKJ6zhM1u3x8tQR8IF7pX8Xp0xr95Tg/exec?code=${decodedText}`)
+        fetch(`https://script.google.com/macros/s/AKfycbweRgi_fRRvwQd3EiE1ZO-bJmlC76GmNLEqcv6JuHeW2mVPQ70u0XLAppzoWB-BzbIf/exec?code=${decodedText}`)
           .then(res => res.json())
           .then(data => {
             document.getElementById("result").innerText = data.message;
