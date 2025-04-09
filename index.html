@@ -43,7 +43,7 @@
         document.getElementById("reader").style.display = "none";
 
         // Use correct parameter name: `qr`
-        const url = `https://script.google.com/macros/s/AKfycbzl9AOflbHLRpTedNDuxP08zEEFQdd3Oroad4bAuqgjTWxtNNY-OmU3rS9D-xKYBaHQNw/exec?qr=${encodeURIComponent(decodedText)}`;
+        const url = `https://script.google.com/macros/s/AKfycbyX78aofA3fsgh6m-nRKvLPh66Gl2_5jYSSsEPUc8UQtCJPfC9rF7HqImnsMy2l8q4iEA/exec?qr=${encodeURIComponent(decodedText)}`;
 
         fetch(url)
           .then(async res => {
